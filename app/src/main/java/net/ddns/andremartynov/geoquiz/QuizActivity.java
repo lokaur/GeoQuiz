@@ -41,6 +41,13 @@ public class QuizActivity extends AppCompatActivity {
 		setUpButtons();
 
 		mQuestionTextView = (TextView)findViewById(R.id.question_text_view);
+		mQuestionTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "TextView clicked");
+				goToNextQuestion();
+			}
+		});
 		updateQuestion();
 	}
 
@@ -50,8 +57,6 @@ public class QuizActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				Log.d(TAG, "True button clicked");
-				Toast.makeText(QuizActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT)
-						.show();
 				checkAnswer(true);
 			}
 		});
@@ -70,8 +75,7 @@ public class QuizActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				Log.d(TAG, "Next button clicked");
-				mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-				updateQuestion();
+				goToNextQuestion();
 			}
 		});
 	}
@@ -87,6 +91,11 @@ public class QuizActivity extends AppCompatActivity {
 			messageResId = R.string.incorrect_toast;
 
 		Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+	}
+
+	private void goToNextQuestion() {
+		mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+		updateQuestion();
 	}
 
 	private void updateQuestion() {
