@@ -20,7 +20,7 @@ public class QuizActivity extends AppCompatActivity {
 
 	private Button mTrueButton;
 	private Button mFalseButton;
-	private ImageButton mNextButton;
+	private Button mNextButton;
 	private TextView mQuestionTextView;
 	private int mCurrentIndex = 0;
 
@@ -65,7 +65,7 @@ public class QuizActivity extends AppCompatActivity {
 			}
 		});
 
-		mNextButton = (ImageButton)findViewById(R.id.next_button);
+		mNextButton = (Button)findViewById(R.id.next_button);
 		mNextButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
