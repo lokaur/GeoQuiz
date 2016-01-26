@@ -12,11 +12,14 @@ import android.widget.TextView;
 
 public class CheatActivity extends AppCompatActivity {
 
+	private static final String TAG = "CheatActivity";
 	private static final String EXTRA_ANSWER_IS_TRUE = "answer_is_true";
 	private static final String EXTRA_ANSWER_SHOWN = "answer_shown";
+	private static final String KEY_ANSWER_SHOWN = "user_cheated";
 	private boolean mAnswerIsTrue;
 	private TextView mAnswerTextView;
 	private Button mShowAnswer;
+	private boolean mUserCheated;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,25 +28,56 @@ public class CheatActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
+		Log.d(TAG, "onCreate() called");
+
+
 		mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
+		mUserCheated = getIntent().getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
+
+		if (savedInstanceState != null) {
+			Log.d(TAG, "State restored");
+			mUserCheated = savedInstanceState.getBoolean(KEY_ANSWER_SHOWN, false);
+		}
 
 		setUpWidgets();
+
+		if (mUserCheated) {
+			updateAnswer();
+			setAnswerShownResult(true);
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		Log.d(TAG, "onSaveInstanceState() called");
+		savedInstanceState.putBoolean(KEY_ANSWER_SHOWN, mUserCheated);
 	}
 
 	private void setUpWidgets() {
-		mAnswerTextView = (TextView)findViewById(R.id.answerTextView);
+		mAnswerTextView = (TextView) findViewById(R.id.answerTextView);
+		mShowAnswer = (Button) findViewById(R.id.showAnswerButton);
 
-		mShowAnswer = (Button)findViewById(R.id.showAnswerButton);
 		mShowAnswer.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mAnswerIsTrue)
-					mAnswerTextView.setText(R.string.true_button);
-				else
-					mAnswerTextView.setText(R.string.false_button);
+				mUserCheated = true;
+				updateAnswer();
+				mShowAnswer.setEnabled(false);
 				setAnswerShownResult(true);
 			}
 		});
+
+		if (mUserCheated)
+			mShowAnswer.setEnabled(false);
+	}
+
+	private void updateAnswer() {
+		if (mAnswerIsTrue) {
+			mAnswerTextView.setText(R.string.true_button);
+		} else {
+			mAnswerTextView.setText(R.string.false_button);
+		}
 	}
 
 	private void setAnswerShownResult(boolean isAnswerShown) {
@@ -52,9 +86,11 @@ public class CheatActivity extends AppCompatActivity {
 		setResult(RESULT_OK, data);
 	}
 
-	public static Intent newIntent(Context packageContext, boolean answerIsTrue) {
+	public static Intent newIntent(Context packageContext, boolean answerIsTrue,
+	                               boolean userCheated) {
 		Intent i = new Intent(packageContext, CheatActivity.class);
 		i.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+		i.putExtra(EXTRA_ANSWER_SHOWN, userCheated);
 		return i;
 	}
 

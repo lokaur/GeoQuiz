@@ -3,7 +3,6 @@ package net.ddns.andremartynov.geoquiz;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,6 +18,7 @@ public class QuizActivity extends AppCompatActivity {
 
 	private static final String TAG = "QuizActivity";
 	private static final String KEY_INDEX = "index";
+	private static final String KEY_SHOWN= "shown";
 	private static final int REQUEST_CODE_CHEAT = 0;
 
 	private Button mTrueButton;
@@ -56,9 +56,10 @@ public class QuizActivity extends AppCompatActivity {
 			}
 		});
 
-		if (savedInstanceState != null)
+		if (savedInstanceState != null) {
 			mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-
+			mIsCheater = savedInstanceState.getBoolean(KEY_SHOWN, false);
+		}
 		updateQuestion();
 	}
 
@@ -67,6 +68,7 @@ public class QuizActivity extends AppCompatActivity {
 		super.onSaveInstanceState(savedInstanceState);
 		Log.d(TAG, "onSaveInstanceState() called");
 		savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+		savedInstanceState.putBoolean(KEY_SHOWN, mIsCheater);
 	}
 
 	@Override
@@ -135,6 +137,7 @@ public class QuizActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				Log.d(TAG, "Next button clicked");
+				mIsCheater = false;
 				goToNextQuestion();
 			}
 		});
@@ -145,6 +148,7 @@ public class QuizActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				Log.d(TAG, "Prev button clicked");
 				mCurrentIndex = mCurrentIndex > 0 ? (mCurrentIndex - 1) : mQuestionBank.length - 1;
+				mIsCheater = false;
 				updateQuestion();
 			}
 		});
@@ -155,7 +159,7 @@ public class QuizActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				Log.d(TAG, "Cheat button clicked");
 				startActivityForResult(CheatActivity.newIntent(QuizActivity.this,
-						mQuestionBank[mCurrentIndex].isAnswerTrue()), REQUEST_CODE_CHEAT);
+						mQuestionBank[mCurrentIndex].isAnswerTrue(), mIsCheater), REQUEST_CODE_CHEAT);
 			}
 		});
 	}
