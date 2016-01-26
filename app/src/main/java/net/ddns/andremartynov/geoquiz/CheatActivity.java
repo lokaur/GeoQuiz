@@ -74,6 +74,9 @@ public class CheatActivity extends AppCompatActivity {
 
 		if (mUserCheated)
 			mShowAnswer.setVisibility(View.INVISIBLE);
+
+		TextView sdkTextView = (TextView) findViewById(R.id.sdkTextView);
+		sdkTextView.setText("API level " + String.valueOf(Build.VERSION.SDK_INT));
 	}
 
 	private void addAnimation() {
@@ -113,7 +116,7 @@ public class CheatActivity extends AppCompatActivity {
 	}
 
 	public static Intent newIntent(Context packageContext, boolean answerIsTrue,
-	                               boolean userCheated) {
+									boolean userCheated) {
 		Intent i = new Intent(packageContext, CheatActivity.class);
 		i.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
 		i.putExtra(EXTRA_ANSWER_SHOWN, userCheated);
